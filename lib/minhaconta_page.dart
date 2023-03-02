@@ -6,9 +6,9 @@ class MinhaContaPage extends StatefulWidget {
 }
 
 class _MinhaContaPageState extends State<MinhaContaPage> {
-  String nome = 'John Doe';
-  String email = 'johndoe@email.com';
-  String telefone = '(00) 0000-0000';
+  String nome = 'Igor Yuri';
+  String email = 'igor.yuri@gmail.com';
+  String telefone = '(81) 981992341';
 
   @override
   Widget build(BuildContext context) {
