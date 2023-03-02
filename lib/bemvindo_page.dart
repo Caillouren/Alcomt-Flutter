@@ -1,5 +1,7 @@
+import 'package:alcomt_puro/MenuPage.dart';
 import 'package:flutter/material.dart';
 import 'package:alcomt_puro/cadastro_page.dart';
+import 'package:alcomt_puro/MenuPage.dart';
 
 class BemVindoPage extends StatefulWidget {
   const BemVindoPage({Key? key}) : super(key: key);
@@ -33,7 +35,8 @@ class _BemVindoPageState extends State<BemVindoPage> {
                     labelText: 'E-mail',
                     hintText: 'nome@email.com',
                     filled: true, // ativa o background
-                    fillColor: Colors.white.withOpacity(0.2), // define o background da caixa de texto com transparência    
+                    fillColor: Colors.white.withOpacity(
+                        0.2), // define o background da caixa de texto com transparência
                   ),
                   validator: (email) {
                     if (email == null || email.isEmpty) {
@@ -50,7 +53,8 @@ class _BemVindoPageState extends State<BemVindoPage> {
                     labelText: 'Senha',
                     hintText: 'Digite sua senha',
                     filled: true, // ativa o background
-                    fillColor: Colors.white.withOpacity(0.2), // define o background da caixa de texto com transparência    
+                    fillColor: Colors.white.withOpacity(
+                        0.2), // define o background da caixa de texto com transparência
                   ),
                   validator: (senha) {
                     if (senha == null || senha.isEmpty) {
@@ -61,7 +65,12 @@ class _BemVindoPageState extends State<BemVindoPage> {
                 ),
                 SizedBox(height: 15),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MenuPage()),
+                    );
+                  },
                   child: Text(
                     'ENTRAR',
                     style: TextStyle(fontSize: 18, color: Colors.black),
@@ -80,7 +89,8 @@ class _BemVindoPageState extends State<BemVindoPage> {
                 Row(
                   children: [
                     Expanded(
-                      child: ElevatedButton(  //botão Registre-se
+                      child: ElevatedButton(
+                        //botão Registre-se
                         onPressed: () {},
                         child: Text(
                           'Recuperar a Senha',
@@ -102,11 +112,12 @@ class _BemVindoPageState extends State<BemVindoPage> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.push(   //Navega para a página
+                          Navigator.push(
+                            //Navega para a página
                             context,
                             MaterialPageRoute(
                                 builder: (context) => CadastroPage()),
-                          );                        
+                          );
                         },
                         child: Text(
                           'Cadastrar',
