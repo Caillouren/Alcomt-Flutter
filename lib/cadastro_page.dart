@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:alcomt_puro/bairrosPage.dart';
 
 class CadastroPage extends StatefulWidget {
   @override
@@ -154,7 +155,12 @@ class _CadastroPageState extends State<CadastroPage> {
             // botão de cadastrar
             ElevatedButton(
               onPressed: () {
-                // código para salvar o cadastro
+                Navigator.push(
+                  //Navega para a página
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AddBairroPage()),
+                ); // código para salvar o cadastro
               },
               child: Text(
                 'Cadastrar',
