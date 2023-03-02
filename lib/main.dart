@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'bemvindo_page.dart';
+import 'LoginPage.dart';
 
 void main() {
   runApp(const MyApp());

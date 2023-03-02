@@ -42,6 +42,9 @@ class _CadastroPageState extends State<CadastroPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Image.asset(
+              'assets/logo_alcomt.png',
+            ),
             // campo de texto para o nome
             TextFormField(
               controller: _nomeController,
