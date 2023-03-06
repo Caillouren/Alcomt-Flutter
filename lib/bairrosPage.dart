@@ -3,7 +3,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'dart:async';
 import 'dart:convert';
 import 'package:csv/csv.dart';
-import 'package:alcomt_puro/minhaconta_page.dart';
+import 'package:alcomt_puro/MenuPage.dart';
 
 class AddBairroPage extends StatefulWidget {
   @override
@@ -11,17 +11,18 @@ class AddBairroPage extends StatefulWidget {
 }
 
 class _AddBairroPageState extends State<AddBairroPage> {
-  List<String>? _bairros;                 // Lista de bairros
-  Map<String, int>? _bairroIndices;       // índices dos bairros
-  List<bool> _selectedBairros = [];       // bairros selecionados
-  List<String>? _filteredBairros;         // bairros filtrados
+  List<String>? _bairros; // Lista de bairros
+  Map<String, int>? _bairroIndices; // índices dos bairros
+  List<bool> _selectedBairros = []; // bairros selecionados
+  List<String>? _filteredBairros; // bairros filtrados
 
-  final TextEditingController _searchController = TextEditingController();  // Controlador de texto para pesquisa de bairros
+  final TextEditingController _searchController =
+      TextEditingController(); // Controlador de texto para pesquisa de bairros
 
   @override
   void initState() {
     super.initState();
-    loadBairros();  // Carrega os bairros a partir do arquivo CSV
+    loadBairros(); // Carrega os bairros a partir do arquivo CSV
   }
 
   //importa os bairros do Recife
@@ -54,9 +55,8 @@ class _AddBairroPageState extends State<AddBairroPage> {
   void searchBairros(String searchTerm) {
     setState(() {
       _filteredBairros = _bairros
-          ?.where((bairro) => bairro
-              .toLowerCase()
-              .contains(searchTerm.toLowerCase()))
+          ?.where((bairro) =>
+              bairro.toLowerCase().contains(searchTerm.toLowerCase()))
           .toList();
     });
   }
@@ -66,9 +66,9 @@ class _AddBairroPageState extends State<AddBairroPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("Adicionar Bairros de Interesse",
-        style: 
-              TextStyle(color: Colors.white),
+        title: Text(
+          "Adicionar Bairros de Interesse",
+          style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.black,
         leading: IconButton(
@@ -88,11 +88,11 @@ class _AddBairroPageState extends State<AddBairroPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-              Image.asset(
-                'assets/logo_alcomt.png',
-                width: 200,
-                height: 200,
-              ),
+            Image.asset(
+              'assets/logo_alcomt.png',
+              width: 200,
+              height: 200,
+            ),
             //exibe os bairros selecionados
             Wrap(
               children: _selectedBairros
@@ -132,12 +132,14 @@ class _AddBairroPageState extends State<AddBairroPage> {
               ),
             ),
             Container(
-              height: MediaQuery.of(context).size.height * 0.25, // Defina a altura desejada
+              height: MediaQuery.of(context).size.height *
+                  0.25, // Defina a altura desejada
               child: _bairros != null && _bairros!.isNotEmpty
                   ? ListView.builder(
                       itemCount: 2,
                       itemBuilder: (context, index) {
-                        if (index >= (_filteredBairros?.length ?? _bairros!.length)) {
+                        if (index >=
+                            (_filteredBairros?.length ?? _bairros!.length)) {
                           return SizedBox();
                         }
                         final String bairro =
@@ -150,7 +152,8 @@ class _AddBairroPageState extends State<AddBairroPage> {
                           ),
                           onChanged: (bool? value) {
                             setState(() {
-                              _selectedBairros[_bairros!.indexOf(bairro)] = value ?? false;
+                              _selectedBairros[_bairros!.indexOf(bairro)] =
+                                  value ?? false;
                             });
                           },
                         );
@@ -164,8 +167,7 @@ class _AddBairroPageState extends State<AddBairroPage> {
                 Navigator.push(
                   //Navega para a página
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => MinhaContaPage()),
+                  MaterialPageRoute(builder: (context) => MenuPage()),
                 ); // código para salvar o cadastro
               },
               child: Text(
