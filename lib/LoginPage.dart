@@ -1,7 +1,6 @@
 import 'package:alcomt_puro/MenuPage.dart';
 import 'package:flutter/material.dart';
 import 'package:alcomt_puro/cadastro_page.dart';
-import 'package:alcomt_puro/MenuPage.dart';
 
 class BemVindoPage extends StatefulWidget {
   const BemVindoPage({Key? key}) : super(key: key);
