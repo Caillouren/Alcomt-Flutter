@@ -45,6 +45,8 @@ class _CadastroPageState extends State<CadastroPage> {
           children: [
             Image.asset(
               'assets/logo_alcomt.png',
+              width: 200,
+              height: 200,
             ),
             // campo de texto para o nome
             TextFormField(

@@ -3,14 +3,14 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'dart:async';
 import 'dart:convert';
 import 'package:csv/csv.dart';
-import 'package:alcomt_puro/MenuPage.dart';
+import 'package:alcomt_puro/minhaconta_page.dart';
 
-class AddBairroPage extends StatefulWidget {
+class EditBairroPage extends StatefulWidget {
   @override
-  _AddBairroPageState createState() => _AddBairroPageState();
+  _EditBairroPageState createState() => _EditBairroPageState();
 }
 
-class _AddBairroPageState extends State<AddBairroPage> {
+class _EditBairroPageState extends State<EditBairroPage> {
   List<String>? _bairros; // Lista de bairros
   Map<String, int>? _bairroIndices; // índices dos bairros
   List<bool> _selectedBairros = []; // bairros selecionados
@@ -67,7 +67,7 @@ class _AddBairroPageState extends State<AddBairroPage> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(
-          "Adicionar Bairros de Interesse",
+          "Editar Bairros de Interesse",
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.black,
@@ -167,7 +167,7 @@ class _AddBairroPageState extends State<AddBairroPage> {
                 Navigator.push(
                   //Navega para a página
                   context,
-                  MaterialPageRoute(builder: (context) => MenuPage()),
+                  MaterialPageRoute(builder: (context) => MinhaContaPage()),
                 ); // código para salvar o cadastro
               },
               child: Text(
