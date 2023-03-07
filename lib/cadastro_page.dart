@@ -152,7 +152,7 @@ class _CadastroPageState extends State<CadastroPage> {
               },
             ),
             SizedBox(height: 20),
-            // botão de cadastrar
+            // Botão de cadastrar
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -160,7 +160,7 @@ class _CadastroPageState extends State<CadastroPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => AddBairroPage()),
-                ); // código para salvar o cadastro
+                ); // Código para salvar o cadastro
               },
               child: Text(
                 'Cadastrar',
