@@ -1,9 +1,10 @@
 class User {
-  final string id;
-  final string nome;
-  final string email;
-  final string telefone;
-  final string senha;
+  final String id;
+  final String nome;
+  final String email;
+  final String telefone;
+  final String senha;
+  final List bairros;
 
   const User({
     this.id;
