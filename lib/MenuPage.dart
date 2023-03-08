@@ -1,9 +1,11 @@
 import 'package:alcomt_puro/minhaconta_page.dart';
 import 'package:flutter/material.dart';
 import 'package:alcomt_puro/LoginPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MenuPage extends StatelessWidget {
-  const MenuPage({Key? key}) : super(key: key);
+  const MenuPage({Key? key, required this.auth}) : super(key: key);
+  final FirebaseAuth auth;
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +22,11 @@ class MenuPage extends StatelessWidget {
             Icons.arrow_back,
             color: Colors.white,
           ),
-          onPressed: () {
+          onPressed: () async {
+            await auth.signOut(); // Desautentica o usuário
             Navigator.push(
-              //Navega para a página
               context,
-              MaterialPageRoute(builder: (context) => BemVindoPage()),
+              MaterialPageRoute(builder: (context) => LoginPage(auth: auth)),
             );
           },
         ),
@@ -40,7 +42,7 @@ class MenuPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MinhaContaPage()),
+                    MaterialPageRoute(builder: (context) => MinhaContaPage(auth: auth)),
                   );
                 },
                 child: Row(

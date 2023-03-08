@@ -4,8 +4,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:csv/csv.dart';
 import 'package:alcomt_puro/MenuPage.dart';
+import 'package:alcomt_puro/LoginPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddBairroPage extends StatefulWidget {
+  const AddBairroPage({Key? key, required this.auth}) : super(key: key);
+  final FirebaseAuth auth;
+
   @override
   _AddBairroPageState createState() => _AddBairroPageState();
 }
@@ -76,9 +81,13 @@ class _AddBairroPageState extends State<AddBairroPage> {
             Icons.arrow_back,
             color: Colors.white, // define a cor do ícone como branca
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () async {
+            await widget.auth.signOut(); // Desautentica o usuário
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginPage(auth: widget.auth)),
+            );
+          }
         ),
         elevation: 0,
       ),
@@ -167,7 +176,7 @@ class _AddBairroPageState extends State<AddBairroPage> {
                 Navigator.push(
                   //Navega para a página
                   context,
-                  MaterialPageRoute(builder: (context) => MenuPage()),
+                  MaterialPageRoute(builder: (context) => MenuPage(auth: FirebaseAuth.instance)),
                 ); // código para salvar o cadastro
               },
               child: Text(
