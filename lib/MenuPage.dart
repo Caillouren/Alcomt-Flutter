@@ -1,9 +1,8 @@
-import 'package:alcomt_puro/adicNotifPage.dart';
 import 'package:alcomt_puro/minhaconta_page.dart';
 import 'package:flutter/material.dart';
 import 'package:alcomt_puro/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:alcomt_puro/addNotificacoes.dart';
+import 'package:alcomt_puro/adicNotifPage.dart';
 
 class MenuPage extends StatelessWidget {
   const MenuPage({Key? key, required this.auth}) : super(key: key);
@@ -97,7 +96,6 @@ class MenuPage extends StatelessWidget {
             backgroundColor: Colors.black,
             onPressed: () {
               Navigator.push(
-<<<<<<< Updated upstream
                 context,
                 MaterialPageRoute(builder: (context) => adicNotifPage()),
               );
