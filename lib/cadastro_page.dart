@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:alcomt_puro/bairrosPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CadastroPage extends StatefulWidget {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   _CadastroPageState createState() => _CadastroPageState();
 }
@@ -14,6 +17,27 @@ class _CadastroPageState extends State<CadastroPage> {
   TextEditingController _telefoneController = TextEditingController();
   TextEditingController _senhaController = TextEditingController();
   TextEditingController _confirmaSenhaController = TextEditingController();
+
+  Future<void> _cadastrarUsuario() async {
+  try {
+    UserCredential userCredential = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+            email: _emailController.text, password: _senhaController.text);
+    print("Usuário criado com sucesso: ${userCredential.user!.uid}");
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddBairroPage(auth: FirebaseAuth.instance)),
+    );
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'weak-password') {
+      print('A senha fornecida é muito fraca.');
+    } else if (e.code == 'email-already-in-use') {
+      print('O e-mail já está em uso.');
+    }
+  } catch (e) {
+    print(e);
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -157,12 +181,7 @@ class _CadastroPageState extends State<CadastroPage> {
             // Botão de cadastrar
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  //Navega para a página
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AddBairroPage()),
-                ); // Código para salvar o cadastro
+                _cadastrarUsuario();
               },
               child: Text(
                 'Cadastrar',

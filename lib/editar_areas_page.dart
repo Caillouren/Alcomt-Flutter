@@ -4,8 +4,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:csv/csv.dart';
 import 'package:alcomt_puro/minhaconta_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EditBairroPage extends StatefulWidget {
+  final FirebaseAuth auth;
+  const EditBairroPage({Key? key, required this.auth}) : super(key: key);
+
   @override
   _EditBairroPageState createState() => _EditBairroPageState();
 }
@@ -167,7 +171,7 @@ class _EditBairroPageState extends State<EditBairroPage> {
                 Navigator.push(
                   //Navega para a página
                   context,
-                  MaterialPageRoute(builder: (context) => MinhaContaPage()),
+                  MaterialPageRoute(builder: (context) => MinhaContaPage(auth: widget.auth)),
                 ); // código para salvar o cadastro
               },
               child: Text(

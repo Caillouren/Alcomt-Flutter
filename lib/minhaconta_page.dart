@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:alcomt_puro/editar_areas_page.dart';
 import 'package:alcomt_puro/MenuPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MinhaContaPage extends StatefulWidget {
+  final FirebaseAuth auth;
+  const MinhaContaPage({Key? key, required this.auth}) : super(key: key);
+
   @override
   _MinhaContaPageState createState() => _MinhaContaPageState();
 }
@@ -32,7 +36,7 @@ class _MinhaContaPageState extends State<MinhaContaPage> {
             Navigator.push(
               //Navega para a página
               context,
-              MaterialPageRoute(builder: (context) => MenuPage()),
+              MaterialPageRoute(builder: (context) => MenuPage(auth: widget.auth)),
             );
           },
         ),
@@ -96,7 +100,7 @@ class _MinhaContaPageState extends State<MinhaContaPage> {
                 // Ação do botão "Editar áreas de interesse"
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EditBairroPage()),
+                  MaterialPageRoute(builder: (context) => EditBairroPage(auth: FirebaseAuth.instance)),
                 ); // código para salvar o cadastro
               },
               child: Text(
