@@ -1,3 +1,4 @@
+import 'package:alcomt_puro/adicNotifPage.dart';
 import 'package:alcomt_puro/minhaconta_page.dart';
 import 'package:flutter/material.dart';
 import 'package:alcomt_puro/LoginPage.dart';
@@ -90,7 +91,12 @@ class MenuPage extends StatelessWidget {
           ),
           FloatingActionButton(
             backgroundColor: Colors.black,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => adicNotifPage()),
+              );
+            },
             child: Icon(Icons.add),
           ),
         ],
