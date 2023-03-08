@@ -59,36 +59,58 @@ class _RecuperarSenhaState extends State<RecuperarSenha> {
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Por favor, insira um e-mail.";
-                  } else if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
-                    return "Por favor, insira um e-mail válido.";
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  labelText: "E-mail",
-                ),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Image.asset('assets/logo_alcomt.png'),
+                  SizedBox(height: 20),                  
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Por favor, insira um e-mail.";
+                      } else if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                        return "Por favor, insira um e-mail válido.";
+                      }
+                      return null;
+                    },
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: "E-mail",
+                      hintText: 'nome@email.com',
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                      filled: true, // ativa o background
+                      fillColor: Colors.white.withOpacity(
+                        0.2), // define o background da caixa de texto com transparência                      
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: _isSubmitting ? null : _submit,
+                    child: _isSubmitting
+                        ? CircularProgressIndicator()
+                        : Text("Recuperar Senha",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                          ),
+                        ),
+                  ),
+                ],
               ),
-              SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _isSubmitting ? null : _submit,
-                child: _isSubmitting
-                    ? CircularProgressIndicator()
-                    : Text("Recuperar Senha"),
-              ),
-            ],
-          ),
-        ),
+            ),
+        ),  
       ),
     );
   }
