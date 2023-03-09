@@ -90,8 +90,12 @@ class MenuPage extends StatelessWidget {
           ),
           FloatingActionButton(
             backgroundColor: Colors.black,
-            onPressed: () {},
-            child: Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => adicNotifPage()),
+              );
+            },
           ),
         ],
       ),
