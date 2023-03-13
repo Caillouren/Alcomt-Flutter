@@ -58,18 +58,10 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       labelText: 'E-mail',
                       hintText: 'nome@email.com',
-                      labelStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),                      
                       filled: true, // ativa o background
                       fillColor: Colors.white.withOpacity(
                           0.2), // define o background da caixa de texto com transparência
                     ),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),                    
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -86,19 +78,11 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       labelText: 'Senha',
                       hintText: 'Digite sua senha',
-                      labelStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),                      
                       filled: true, // ativa o background
                       fillColor: Colors.white.withOpacity(
                           0.2), // define o background da caixa de texto com transparência
                     ),
                     obscureText: true,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),                    
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor, insira uma senha válida.';

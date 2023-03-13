@@ -9,11 +9,11 @@ class adicNotifPage extends StatelessWidget {
         title: Text("Adicionar Notificação",
             style: TextStyle(color: Colors.white)),
       ),
-      body: Container(
-        color: Colors.black,
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,          
           children: [
             Text("Tipo", style: TextStyle(color: Colors.white)),
             SizedBox(height: 8.0),

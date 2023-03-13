@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:alcomt_puro/bairrosPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; 
 
 class CadastroPage extends StatefulWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -24,6 +25,16 @@ class _CadastroPageState extends State<CadastroPage> {
         .createUserWithEmailAndPassword(
             email: _emailController.text, password: _senhaController.text);
     print("Usuário criado com sucesso: ${userCredential.user!.uid}");
+
+    Map<String, dynamic> userData = {
+      'nome': _nomeController.text,
+      'email': _emailController.text,
+      'telefone': _telefoneController.text
+    };
+    
+    //inserir os dados na coleção usuários
+    await FirebaseFirestore.instance.collection('usuarios').doc(userCredential.user!.uid).set(userData);
+
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => AddBairroPage(auth: FirebaseAuth.instance)),
