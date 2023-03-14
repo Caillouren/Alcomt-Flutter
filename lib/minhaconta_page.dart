@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:alcomt_puro/editar_areas_page.dart';
 import 'package:alcomt_puro/MenuPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:alcomt_puro/AltSenhaPage.dart';
 
 class MinhaContaPage extends StatefulWidget {
   final FirebaseAuth auth;
@@ -36,7 +37,8 @@ class _MinhaContaPageState extends State<MinhaContaPage> {
             Navigator.push(
               //Navega para a página
               context,
-              MaterialPageRoute(builder: (context) => MenuPage(auth: widget.auth)),
+              MaterialPageRoute(
+                  builder: (context) => MenuPage(auth: widget.auth)),
             );
           },
         ),
@@ -100,7 +102,9 @@ class _MinhaContaPageState extends State<MinhaContaPage> {
                 // Ação do botão "Editar áreas de interesse"
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EditBairroPage(auth: FirebaseAuth.instance)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          EditBairroPage(auth: FirebaseAuth.instance)),
                 ); // código para salvar o cadastro
               },
               child: Text(
@@ -112,6 +116,12 @@ class _MinhaContaPageState extends State<MinhaContaPage> {
             ElevatedButton(
               onPressed: () {
                 // Ação do botão "Alterar senha"
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          AltSenhaPage(auth: FirebaseAuth.instance)),
+                );
               },
               child: Text(
                 'Alterar senha',
