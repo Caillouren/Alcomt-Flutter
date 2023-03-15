@@ -18,8 +18,8 @@ class _AltSenhaPageState extends State<AltSenhaPage> {
   String _novaSenha = '';
 
   Future<void> updatePassword(String userId, String newPassword) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
-    await userRef.update({'password': newPassword});
+    final userRef = FirebaseFirestore.instance.collection('usuarios').doc(userId);
+    await userRef.update({'senha': newPassword});
   }
 
   @override

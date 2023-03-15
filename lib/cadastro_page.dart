@@ -29,7 +29,8 @@ class _CadastroPageState extends State<CadastroPage> {
         Map<String, dynamic> userData = {
           'nome': _nomeController.text,
           'email': _emailController.text,
-          'telefone': _telefoneController.text
+          'telefone': _telefoneController.text,
+          'senha': _senhaController.text
         };
         
         //inserir os dados na coleção usuários
