@@ -20,35 +20,35 @@ class _CadastroPageState extends State<CadastroPage> {
   TextEditingController _confirmaSenhaController = TextEditingController();
 
   Future<void> _cadastrarUsuario() async {
-  try {
-    UserCredential userCredential = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-            email: _emailController.text, password: _senhaController.text);
-    print("Usuário criado com sucesso: ${userCredential.user!.uid}");
+    try {
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+                email: _emailController.text, password: _senhaController.text);
+        print("Usuário criado com sucesso: ${userCredential.user!.uid}");
 
-    Map<String, dynamic> userData = {
-      'nome': _nomeController.text,
-      'email': _emailController.text,
-      'telefone': _telefoneController.text
-    };
-    
-    //inserir os dados na coleção usuários
-    await FirebaseFirestore.instance.collection('usuarios').doc(userCredential.user!.uid).set(userData);
+        Map<String, dynamic> userData = {
+          'nome': _nomeController.text,
+          'email': _emailController.text,
+          'telefone': _telefoneController.text
+        };
+        
+        //inserir os dados na coleção usuários
+        await FirebaseFirestore.instance.collection('usuarios').doc(userCredential.user!.uid).set(userData);
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AddBairroPage(auth: FirebaseAuth.instance)),
-    );
-  } on FirebaseAuthException catch (e) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AddBairroPage(auth: FirebaseAuth.instance)),
+        );
+    } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {
       print('A senha fornecida é muito fraca.');
     } else if (e.code == 'email-already-in-use') {
       print('O e-mail já está em uso.');
     }
-  } catch (e) {
-    print(e);
+    } catch (e) {
+      print(e);
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {

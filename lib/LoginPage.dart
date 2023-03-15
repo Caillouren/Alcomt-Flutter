@@ -17,25 +17,34 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String _email = '';
-  String _password = '';
 
   Future<void> _signInWithEmailAndPassword(BuildContext context) async {
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
     try {
-      await widget.auth.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => MenuPage(auth: FirebaseAuth.instance),
-      ));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MenuPage(auth: FirebaseAuth.instance),
+        ),
+      );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('Nenhum usuário encontrado para esse e-mail.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Nenhum usuário encontrado para esse e-mail.'),
+          ),
+        );
       } else if (e.code == 'wrong-password') {
-        print('Senha incorreta.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Senha incorreta.'),
+          ),
+        );
       }
     }
   }
@@ -55,6 +64,10 @@ class _LoginPageState extends State<LoginPage> {
                   Image.asset('assets/logo_alcomt.png'),
                   SizedBox(height: 20),
                   TextFormField(
+                    controller: _emailController,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14),                     
                     decoration: InputDecoration(
                       labelText: 'E-mail',
                       hintText: 'nome@email.com',
@@ -69,12 +82,13 @@ class _LoginPageState extends State<LoginPage> {
                       }
                       return null;
                     },
-                    onSaved: (value) {
-                      _email = value!;
-                    },
                   ),
                   SizedBox(height: 12),
                   TextFormField(
+                    controller: _passwordController,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14),                     
                     decoration: InputDecoration(
                       labelText: 'Senha',
                       hintText: 'Digite sua senha',
@@ -89,46 +103,12 @@ class _LoginPageState extends State<LoginPage> {
                       }
                       return null;
                     },
-                    onSaved: (value) {
-                      _password = value!;
-                    },
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () async {
+                    onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        try {
-                          var scaffoldContext = ScaffoldMessenger.of(context);
-                          await widget.auth.signInWithEmailAndPassword(
-                            email: _email,
-                            password: _password,
-                          );
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    MenuPage(auth: FirebaseAuth.instance)),
-                          );
-                        } on FirebaseAuthException catch (e) {
-                          if (e.code == 'user-not-found') {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Usuário não encontrado')),
-                            );
-                          } else if (e.code == 'wrong-password') {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Senha incorreta')),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Erro ao realizar login')),
-                            );
-                          }
-                        } catch (e) {
-                          print(e);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Erro ao realizar login')),
-                          );
-                        }
+                        _signInWithEmailAndPassword(context);
                       }
                     },
                     child: Text(
