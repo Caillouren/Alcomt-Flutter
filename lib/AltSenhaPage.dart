@@ -17,9 +17,30 @@ class _AltSenhaPageState extends State<AltSenhaPage> {
   String _senhaAntiga = '';
   String _novaSenha = '';
 
-  Future<void> updatePassword(String userId, String newPassword) async {
-    final userRef = FirebaseFirestore.instance.collection('usuarios').doc(userId);
-    await userRef.update({'senha': newPassword});
+  Future<void> updatePassword(String newPassword) async {
+    final user = widget.auth.currentUser;
+    final credential = EmailAuthProvider.credential(
+      email: user!.email!,
+      password: _senhaAntiga,
+    );
+    try {
+      await user.reauthenticateWithCredential(credential);
+      await user.updatePassword(newPassword);
+      final userRef =
+          FirebaseFirestore.instance.collection('usuarios').doc(user.uid);
+      await userRef.update({'senha': newPassword});
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'wrong-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Senha incorreta. Tente novamente.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao atualizar senha. Tente novamente.')),
+      );
+    }
   }
 
   @override
@@ -65,8 +86,7 @@ class _AltSenhaPageState extends State<AltSenhaPage> {
                 onPressed: () async {
                   if (_formKey.currentState?.validate() == true) {
                     _formKey.currentState?.save();
-                    await updatePassword(userId, _novaSenha);
-                    Navigator.pop(context);
+                    await updatePassword(_novaSenha);
                   }
                 },
                 child: Text('Salvar'),
