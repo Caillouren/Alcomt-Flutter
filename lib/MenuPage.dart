@@ -112,7 +112,7 @@ class MenuPage extends StatelessWidget {
               );
             },
             child: Text(
-              'ENTRAR',
+              '+',
               style: TextStyle(fontSize: 18, color: Colors.black),
             ),
             style: ButtonStyle(

@@ -4,6 +4,7 @@ class adicNotifPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Text("Adicionar Notificação",
@@ -15,7 +16,12 @@ class adicNotifPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,          
           children: [
-            Text("Tipo", style: TextStyle(color: Colors.white)),
+            Image.asset(
+            'assets/logo_alcomt.png',
+            width: 250,
+            height: 250,
+          ),
+            Text("Tipo de alerta", style: TextStyle(color: Colors.white)),
             SizedBox(height: 8.0),
             _buildDropdownButton(["Chuva", "Batida", "Interditada"]),
             SizedBox(height: 16.0),
@@ -23,24 +29,31 @@ class adicNotifPage extends StatelessWidget {
             SizedBox(height: 8.0),
             _buildDropdownButton(["Boa Viagem", "Boa Vista", "Madalena"]),
             SizedBox(height: 16.0),
-            Text("Descrição", style: TextStyle(color: Colors.white)),
+            Text("Descrição",style: TextStyle(color: Colors.white)),
             SizedBox(height: 8.0),
             Container(
               height: 200,
               child: TextFormField(
                 maxLines: null,
                 decoration: InputDecoration(
+                  hintText: "Descreva aqui mais detalhes sobre o alerta...",
                   fillColor: Colors.white,
                   filled: true,
                   border: OutlineInputBorder(),
                 ),
               ),
             ),
-            SizedBox(height: 16.0),
+            SizedBox(height: 0.0),
             ElevatedButton(
               onPressed: () {},
-              child: Text("Enviar"),
+              child: Text(
+                "Enviar",
+                style: TextStyle(
+                  color: Colors.black, // define a cor do texto como preto
+                ),
+              ),
             ),
+
           ],
         ),
       ),
