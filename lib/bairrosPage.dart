@@ -83,7 +83,7 @@ class _AddBairroPageState extends State<AddBairroPage> {
       try {
         DocumentReference userRef =
             firestore.collection('usuarios').doc(_uidFire);
-        Map<String, dynamic> userData = (await userRef.get()).data()!;
+        Map<String, dynamic>? userData = (await userRef.get()).data() as Map<String, dynamic>?;
 
         if (userData != null) {
           List<String> currentBairrosSelecionados =
@@ -206,7 +206,7 @@ class _AddBairroPageState extends State<AddBairroPage> {
             // botão de cadastrar
             ElevatedButton(
               onPressed: () {
-                //salvarBairrosSelecionados();
+                salvarBairrosSelecionados();
                 Navigator.push(
                   //Navega para a página
                   context,
