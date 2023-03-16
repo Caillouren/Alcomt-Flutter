@@ -17,7 +17,7 @@ class _CadastroPageState extends State<CadastroPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _telefoneController = TextEditingController();
   TextEditingController _senhaController = TextEditingController();
-  TextEditingController _confirmaSenhaController = TextEditingController();
+  TextEditingController _confirmaSenhaController = TextEditingController(); 
 
   Future<void> _cadastrarUsuario() async {
     try {
@@ -29,8 +29,7 @@ class _CadastroPageState extends State<CadastroPage> {
         Map<String, dynamic> userData = {
           'nome': _nomeController.text,
           'email': _emailController.text,
-          'telefone': _telefoneController.text,
-          'senha': _senhaController.text
+          'telefone': _telefoneController.text
         };
         
         //inserir os dados na coleção usuários

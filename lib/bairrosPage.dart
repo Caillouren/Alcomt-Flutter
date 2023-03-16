@@ -6,6 +6,7 @@ import 'package:csv/csv.dart';
 import 'package:alcomt_puro/MenuPage.dart';
 import 'package:alcomt_puro/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddBairroPage extends StatefulWidget {
   const AddBairroPage({Key? key, required this.auth}) : super(key: key);
@@ -24,10 +25,15 @@ class _AddBairroPageState extends State<AddBairroPage> {
   final TextEditingController _searchController =
       TextEditingController(); // Controlador de texto para pesquisa de bairros
 
+  // Salva os bairros selecionados no banco
+  late String _uidFire; // ID do usuário logado
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
   @override
   void initState() {
     super.initState();
     loadBairros(); // Carrega os bairros a partir do arquivo CSV
+    _uidFire = widget.auth.currentUser!.uid; // Obtém o ID do usuário logado
   }
 
   //importa os bairros do Recife
@@ -66,6 +72,33 @@ class _AddBairroPageState extends State<AddBairroPage> {
     });
   }
 
+  void salvarBairrosSelecionados() async {
+      List<String> bairrosSelecionados = _selectedBairros
+          .asMap()
+          .entries
+          .where((entry) => entry.value)
+          .map((entry) => _bairros![entry.key])
+          .toList();
+
+      try {
+        DocumentReference userRef =
+            firestore.collection('usuarios').doc(_uidFire);
+        Map<String, dynamic> userData = (await userRef.get()).data()!;
+
+        if (userData != null) {
+          List<String> currentBairrosSelecionados =
+              List<String>.from(userData['bairrosSelecionados'] ?? []);
+          bairrosSelecionados =
+              [...currentBairrosSelecionados, ...bairrosSelecionados].toSet().toList();
+        }
+        await userRef.set({
+          'bairrosSelecionados': bairrosSelecionados,
+        }, SetOptions(merge: true));
+      } catch (e) {
+        print('Erro ao adicionar bairros selecionados: $e');
+      }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,18 +110,18 @@ class _AddBairroPageState extends State<AddBairroPage> {
         ),
         backgroundColor: Colors.black,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.white, // define a cor do ícone como branca
-          ),
-          onPressed: () async {
-            await widget.auth.signOut(); // Desautentica o usuário
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LoginPage(auth: widget.auth)),
-            );
-          }
-        ),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white, // define a cor do ícone como branca
+            ),
+            onPressed: () async {
+              await widget.auth.signOut(); // Desautentica o usuário
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => LoginPage(auth: widget.auth)),
+              );
+            }),
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -173,10 +206,13 @@ class _AddBairroPageState extends State<AddBairroPage> {
             // botão de cadastrar
             ElevatedButton(
               onPressed: () {
+                //salvarBairrosSelecionados();
                 Navigator.push(
                   //Navega para a página
                   context,
-                  MaterialPageRoute(builder: (context) => MenuPage(auth: FirebaseAuth.instance)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          MenuPage(auth: FirebaseAuth.instance)),
                 ); // código para salvar o cadastro
               },
               child: Text(
