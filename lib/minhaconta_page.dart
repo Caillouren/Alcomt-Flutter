@@ -3,6 +3,7 @@ import 'package:alcomt_puro/editar_areas_page.dart';
 import 'package:alcomt_puro/MenuPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:alcomt_puro/AltSenhaPage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MinhaContaPage extends StatefulWidget {
   final FirebaseAuth auth;
@@ -13,9 +14,30 @@ class MinhaContaPage extends StatefulWidget {
 }
 
 class _MinhaContaPageState extends State<MinhaContaPage> {
-  String nome = 'Igor Yuri';
-  String email = 'igor.yuri@gmail.com';
-  String telefone = '(81) 981992341';
+  String nome = '';
+  String email = '';
+  String telefone = '';
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    //obtem os dados do Firestore e atualiza o estado do widget com os valores obtidos
+    final userId = widget.auth.currentUser!.uid;
+    final userRef = firestore.collection('usuarios').doc(userId); 
+
+    userRef.get().then((DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
+      if (documentSnapshot.exists) {
+        setState(() {
+          nome = documentSnapshot.data()!['nome'];
+          email = documentSnapshot.data()!['email'];
+          telefone = documentSnapshot.data()!['telefone'];
+        });
+      } else {
+        print('Dados não encontrados');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

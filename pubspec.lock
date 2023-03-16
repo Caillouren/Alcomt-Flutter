@@ -26,7 +26,12 @@ packages:
     dependency: transitive
     description:
       name: characters
+<<<<<<< HEAD
       url: "https://pub.dartlang.org"
+=======
+      sha256: e6a326c8af69605aec75ed6c187d06b349707a27fbff8222ca9cc2cff167975c
+      url: "https://pub.dev"
+>>>>>>> 5ad8027006b452adc6edeaf0d276a023eb1b94c6
     source: hosted
     version: "1.2.1"
   clock:
