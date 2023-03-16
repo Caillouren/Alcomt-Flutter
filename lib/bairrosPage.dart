@@ -16,6 +16,23 @@ class AddBairroPage extends StatefulWidget {
   _AddBairroPageState createState() => _AddBairroPageState();
 }
 
+class Bairro {
+  final String nome;
+  final String idUsuario;
+
+  Bairro({
+    required this.nome,
+    required this.idUsuario,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'nome': nome,
+      'idUsuario': idUsuario,
+    };
+  }
+}
+
 class _AddBairroPageState extends State<AddBairroPage> {
   List<String>? _bairros; // Lista de bairros
   Map<String, int>? _bairroIndices; // índices dos bairros
@@ -73,30 +90,27 @@ class _AddBairroPageState extends State<AddBairroPage> {
   }
 
   void salvarBairrosSelecionados() async {
-      List<String> bairrosSelecionados = _selectedBairros
-          .asMap()
-          .entries
-          .where((entry) => entry.value)
-          .map((entry) => _bairros![entry.key])
-          .toList();
+    List<Bairro> bairrosSelecionados = _selectedBairros
+        .asMap()
+        .entries
+        .where((entry) => entry.value)
+        .map((entry) =>
+            Bairro(nome: _bairros![entry.key], idUsuario: _uidFire))
+        .toList();
 
-      try {
-        DocumentReference userRef =
-            firestore.collection('usuarios').doc(_uidFire);
-        Map<String, dynamic>? userData = (await userRef.get()).data() as Map<String, dynamic>?;
+    try {
+      CollectionReference bairrosRef = firestore.collection('bairrosUsuarios');
+      DocumentReference userBairrosRef = bairrosRef.doc(_uidFire);
 
-        if (userData != null) {
-          List<String> currentBairrosSelecionados =
-              List<String>.from(userData['bairrosSelecionados'] ?? []);
-          bairrosSelecionados =
-              [...currentBairrosSelecionados, ...bairrosSelecionados].toSet().toList();
-        }
-        await userRef.set({
-          'bairrosSelecionados': bairrosSelecionados,
-        }, SetOptions(merge: true));
-      } catch (e) {
-        print('Erro ao adicionar bairros selecionados: $e');
+      Map<String, dynamic> userBairrosData = {};
+      for (var bairro in bairrosSelecionados) {
+        userBairrosData[bairro.nome] = true;
       }
+
+      await userBairrosRef.set(userBairrosData, SetOptions(merge: true));
+    } catch (e) {
+      print('Erro ao adicionar bairros selecionados: $e');
+    }
   }
 
   @override

@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:csv/csv.dart';
 import 'package:alcomt_puro/minhaconta_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EditBairroPage extends StatefulWidget {
   final FirebaseAuth auth;
@@ -23,10 +24,16 @@ class _EditBairroPageState extends State<EditBairroPage> {
   final TextEditingController _searchController =
       TextEditingController(); // Controlador de texto para pesquisa de bairros
 
+  FirebaseFirestore? firestore;
+  User? currentUser;
+  Map<String, dynamic> bairrosSelecionados = {};
+  List<String> bairros = [];
+
   @override
   void initState() {
     super.initState();
     loadBairros(); // Carrega os bairros a partir do arquivo CSV
+    getCurrentUser();
   }
 
   //importa os bairros do Recife
@@ -63,6 +70,37 @@ class _EditBairroPageState extends State<EditBairroPage> {
               bairro.toLowerCase().contains(searchTerm.toLowerCase()))
           .toList();
     });
+  }
+
+  Future<void> getCurrentUser() async {
+    currentUser = widget.auth.currentUser;
+    firestore = FirebaseFirestore.instance;
+    DocumentSnapshot<Map<String, dynamic>>? doc = await firestore
+        ?.collection('bairrosUsuarios')
+        .doc(currentUser!.uid)
+        .get();
+    if (doc != null && doc.exists) {
+      // Verifica se o documento existe antes de acessar os dados
+      bairrosSelecionados = doc.data() as Map<String, dynamic>;
+      bairros = bairrosSelecionados.entries
+          .where((e) => e.value == true)
+          .map((e) => e.key)
+          .toList();
+    }
+    _selectedBairros = List.generate(
+        _bairros!.length, (index) => bairros.contains(_bairros![index]));
+    setState(() {});
+  }
+
+  Future<void> salvarBairros() async {
+    Map<String, bool> bairrosMap = {};
+    for (int i = 0; i < _bairros!.length; i++) {
+      bairrosMap[_bairros![i]] = _selectedBairros[i];
+    }
+    await firestore
+        ?.collection('bairrosUsuarios')
+        .doc(currentUser!.uid)
+        .set(bairrosMap);
   }
 
   @override
@@ -103,12 +141,20 @@ class _EditBairroPageState extends State<EditBairroPage> {
                   .asMap()
                   .entries
                   .where((entry) => entry.value)
-                  .map((entry) => Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            _bairros![entry.key],
-                            style: TextStyle(fontSize: 14),
+                  .map((entry) => GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedBairros[entry.key] =
+                                false; // Remove o bairro selecionado
+                          });
+                        },
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              _bairros![entry.key],
+                              style: TextStyle(fontSize: 14),
+                            ),
                           ),
                         ),
                       ))
@@ -168,10 +214,12 @@ class _EditBairroPageState extends State<EditBairroPage> {
             // botão de cadastrar
             ElevatedButton(
               onPressed: () {
+                salvarBairros();
                 Navigator.push(
                   //Navega para a página
                   context,
-                  MaterialPageRoute(builder: (context) => MinhaContaPage(auth: widget.auth)),
+                  MaterialPageRoute(
+                      builder: (context) => MinhaContaPage(auth: widget.auth)),
                 ); // código para salvar o cadastro
               },
               child: Text(
