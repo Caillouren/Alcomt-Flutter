@@ -133,7 +133,10 @@ class _CadastroPageState extends State<CadastroPage> {
                   color: Colors.white,
                   fontSize: 14), // define a fonte e cor do texto
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(11),
+                ],
               decoration: InputDecoration(
                 labelText: 'Telefone',
                 hintText: '(xx) xxxxx-xxxx',

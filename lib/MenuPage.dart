@@ -92,16 +92,39 @@ class MenuPage extends StatelessWidget {
               },
             ),
           ),
-          FloatingActionButton(
-            backgroundColor: Colors.black,
+          //FloatingActionButton(
+            //backgroundColor: Colors.black,
+            //onPressed: () {
+              //Navigator.push(
+                //context,
+                //MaterialPageRoute(builder: (context) => adicNotifPage()),
+              //);
+            //},
+            //child: Icon(Icons.add),
+          //),
+          ElevatedButton(
             onPressed: () {
               Navigator.push(
+                //Navega para a página
                 context,
-                MaterialPageRoute(builder: (context) => adicNotifPage()),
+                MaterialPageRoute(
+                    builder: (context) => adicNotifPage()),
               );
             },
-            child: Icon(Icons.add),
-          ),
+            child: Text(
+              'ENTRAR',
+              style: TextStyle(fontSize: 18, color: Colors.black),
+            ),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.white),
+              padding: MaterialStateProperty.all(
+                EdgeInsets.symmetric(vertical: 15),
+              ),
+              textStyle: MaterialStateProperty.all(
+                TextStyle(color: Colors.black, fontSize: 18),
+              ),
+            ),
+          ),          
         ],
       ),
     );

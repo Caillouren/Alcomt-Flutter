@@ -25,8 +25,7 @@ class adicNotifPage extends StatelessWidget {
             SizedBox(height: 16.0),
             Text("Descrição", style: TextStyle(color: Colors.white)),
             SizedBox(height: 8.0),
-            Container(
-              height: 200,
+            Expanded(
               child: TextFormField(
                 maxLines: null,
                 decoration: InputDecoration(
