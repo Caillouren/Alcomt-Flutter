@@ -59,31 +59,26 @@ class _adicNotifPageState extends State<adicNotifPage> {
     return await path_provider.getApplicationDocumentsDirectory();
   }
 
-  Future<void> _pickImage(ImageSource source) async {
+  String generateImageName() {
+    return DateTime.now().millisecondsSinceEpoch.toString() + '.png';
+  }
+
+  void _pickImage(ImageSource source) async {
     final imagePicker = ImagePicker();
-    final pickedFile = await imagePicker.getImage(source: ImageSource.gallery);
+    final pickedFile = await imagePicker.getImage(source: source);
 
     if (pickedFile == null) {
       return;
-    } else {
-      final file = File(pickedFile.path);
-      final fileName = basename(file.path); //nome file
-
-      // Define diretório
-      final directory = await getApplicationDocumentsDirectory();
-      final destinationPath = join(directory.path, fileName);
-
-      // copia p/ diretório
-      await file.copy(destinationPath);
     }
 
+    final appDir = await path_provider.getApplicationDocumentsDirectory();
+    final imageName = generateImageName();
+    final imagePath = path.join(appDir.path, imageName);
+
     try {
-      final appDir = await path_provider.getApplicationDocumentsDirectory();
-      final fileName = path.basename(pickedFile.path);
-      final savedImagePath = '${appDir.path}/$fileName';
-      await File(pickedFile.path).copy(savedImagePath);
+      await File(pickedFile.path).copy(imagePath);
       setState(() {
-        _image = File(savedImagePath);
+        _image = File(imagePath);
       });
     } catch (e) {
       print('Erro ao salvar a imagem: $e');
