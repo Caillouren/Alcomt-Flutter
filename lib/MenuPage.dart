@@ -93,14 +93,14 @@ class MenuPage extends StatelessWidget {
             ),
           ),
           //FloatingActionButton(
-            //backgroundColor: Colors.black,
-            //onPressed: () {
-              //Navigator.push(
-                //context,
-                //MaterialPageRoute(builder: (context) => adicNotifPage()),
-              //);
-            //},
-            //child: Icon(Icons.add),
+          //backgroundColor: Colors.black,
+          //onPressed: () {
+          //Navigator.push(
+          //context,
+          //MaterialPageRoute(builder: (context) => adicNotifPage()),
+          //);
+          //},
+          //child: Icon(Icons.add),
           //),
           ElevatedButton(
             onPressed: () {
@@ -108,7 +108,8 @@ class MenuPage extends StatelessWidget {
                 //Navega para a página
                 context,
                 MaterialPageRoute(
-                    builder: (context) => adicNotifPage()),
+                    builder: (context) =>
+                        adicNotifPage(auth: FirebaseAuth.instance)),
               );
             },
             child: Text(
@@ -124,7 +125,7 @@ class MenuPage extends StatelessWidget {
                 TextStyle(color: Colors.black, fontSize: 18),
               ),
             ),
-          ),          
+          ),
         ],
       ),
     );
