@@ -24,6 +24,7 @@ class _adicNotifPageState extends State<adicNotifPage> {
   double long = 0.0;
   String erro = '';
   String _path = '';
+  String imageName = '';
   Set<Marker> markers = Set<Marker>();
   GoogleMapController? _mapsController;
   FirebaseStorage storage = FirebaseStorage.instance;
@@ -32,6 +33,11 @@ class _adicNotifPageState extends State<adicNotifPage> {
       FirebaseFirestore.instance.collection('images');
 
   get mapsController => _mapsController;
+
+  String generateImageName() {
+    return DateTime.now().millisecondsSinceEpoch.toString() +
+        '_${_image?.hashCode}.png';
+  }
 
   Future<void> uploadFile() async {
     try {
@@ -59,10 +65,6 @@ class _adicNotifPageState extends State<adicNotifPage> {
     return await path_provider.getApplicationDocumentsDirectory();
   }
 
-  String generateImageName() {
-    return DateTime.now().millisecondsSinceEpoch.toString() + '.png';
-  }
-
   void _pickImage(ImageSource source) async {
     final imagePicker = ImagePicker();
     final pickedFile = await imagePicker.getImage(source: source);
@@ -72,7 +74,7 @@ class _adicNotifPageState extends State<adicNotifPage> {
     }
 
     final appDir = await path_provider.getApplicationDocumentsDirectory();
-    final imageName = generateImageName();
+    imageName = generateImageName();
     final imagePath = path.join(appDir.path, imageName);
 
     try {
@@ -269,7 +271,7 @@ class _adicNotifPageState extends State<adicNotifPage> {
                   final snapshot = await FirebaseStorage.instance
                       .ref()
                       .child('images')
-                      .child('imagem.jpg')
+                      .child(imageName)
                       .putFile(_image!, metadata);
                   final imageUrl = await snapshot.ref.getDownloadURL();
                   notificacoesRef.add({
