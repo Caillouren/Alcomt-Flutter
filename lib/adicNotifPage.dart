@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -10,6 +8,11 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:async';
+import 'dart:convert';
+import 'package:csv/csv.dart';
+import 'package:alcomt_puro/mapPage.dart';
 
 class adicNotifPage extends StatefulWidget {
   final FirebaseAuth auth;
@@ -20,20 +23,28 @@ class adicNotifPage extends StatefulWidget {
 }
 
 class _adicNotifPageState extends State<adicNotifPage> {
-  double lat = 0.0;
-  double long = 0.0;
-  String erro = '';
+  List<String> _bairros = []; // Lista de bairros
+  List<String> _tiposAlerta = ["Chuva", "Batida", "Interditada"];
+  String selectedBairro = '';
+  String selectedTipoAlerta = '';
+  TextEditingController _descricaoController = TextEditingController();
+  double lat = 0.0; //mapa
+  double long = 0.0; //mapa
+  String erro = ''; //mapa
   String _path = '';
   String imageName = '';
-  Set<Marker> markers = Set<Marker>();
-  GoogleMapController? _mapsController;
   FirebaseStorage storage = FirebaseStorage.instance;
   File? _image;
   final CollectionReference<Map<String, dynamic>> notificacoesRef =
-      FirebaseFirestore.instance.collection('images');
+      FirebaseFirestore.instance.collection('notificacoes');
 
-  get mapsController => _mapsController;
+  @override
+  void initState() {
+    super.initState();
+    loadBairros(); // Carrega os bairros a partir do arquivo CSV
+  }
 
+// Upload de imagens
   String generateImageName() {
     return DateTime.now().millisecondsSinceEpoch.toString() +
         '_${_image?.hashCode}.png';
@@ -87,85 +98,19 @@ class _adicNotifPageState extends State<adicNotifPage> {
     }
   }
 
-  void onMapCreated(GoogleMapController controller) async {
-    _mapsController = controller;
-    await getPosicao();
-    setState(() {
-      markers.add(
-        Marker(
-          markerId: MarkerId('Minha posição'),
-          position: LatLng(lat, long),
-          icon: BitmapDescriptor.defaultMarker,
-        ),
-      );
-    });
-    _mapsController?.animateCamera(
-      CameraUpdate.newLatLngZoom(
-        LatLng(lat, long),
-        18,
-      ),
-    );
+  //importa os bairros do Recife
+  Future<void> loadBairros() async {
+    final String bairrosString =
+        await rootBundle.loadString('assets/bairrosRecife.csv');
+    _bairros.addAll(convertCsvToListOfString(bairrosString));
+    setState(() {});
   }
 
-  getPosicao() async {
-    bool permissaoGPS = await Permission.location.isGranted;
-    if (!permissaoGPS) {
-      var status = await Permission.location.request();
-      if (status != PermissionStatus.granted) {
-        return Future.error('Permissão de localização negada');
-      }
-    }
-    try {
-      Position posicao = await _posicaoAtual();
-      setState(() {
-        lat = posicao.latitude;
-        long = posicao.longitude;
-        markers.add(
-          Marker(
-            markerId: MarkerId('Minha posição'),
-            position: LatLng(lat, long),
-            icon: BitmapDescriptor.defaultMarker,
-          ),
-        );
-      });
-      _mapsController?.animateCamera(CameraUpdate.newLatLng(LatLng(lat, long)));
-    } catch (e) {
-      erro = e.toString();
-    }
-  }
-
-  Future<Position> _posicaoAtual() async {
-    LocationPermission permissao;
-
-    bool ativado = await Geolocator.isLocationServiceEnabled();
-    if (!ativado) {
-      return Future.error('Por favor, habilite a localização no smartphone');
-    }
-
-    permissao = await Geolocator.checkPermission();
-    if (permissao == LocationPermission.denied) {
-      permissao = await Geolocator.requestPermission();
-      if (permissao == LocationPermission.denied) {
-        return Future.error('Você precisa autorizar o acesso à localização');
-      }
-    }
-
-    if (permissao == LocationPermission.deniedForever) {
-      return Future.error('Você precisa autorizar o acesso à localização');
-    }
-
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    lat = position.latitude;
-    long = position.longitude;
-    _mapsController?.animateCamera(
-      CameraUpdate.newLatLngZoom(
-        LatLng(lat, long),
-        18,
-      ),
-    );
-    return position;
+  // Converte uma string CSV em uma lista de strings
+  List<String> convertCsvToListOfString(String csvString) {
+    List<List<dynamic>> rowsAsListOfValues =
+        const CsvToListConverter().convert(csvString);
+    return rowsAsListOfValues.map((e) => e.first.toString()).toList();
   }
 
   @override
@@ -190,17 +135,20 @@ class _adicNotifPageState extends State<adicNotifPage> {
             ),
             Text("Tipo de alerta", style: TextStyle(color: Colors.white)),
             SizedBox(height: 8.0),
-            _buildDropdownButton(["Chuva", "Batida", "Interditada"]),
+            _buildDropdownButtonAlerta(
+                _tiposAlerta), //seleciona o tipo de alerta
             SizedBox(height: 16.0),
             Text("Bairro", style: TextStyle(color: Colors.white)),
             SizedBox(height: 8.0),
-            _buildDropdownButton(["Boa Viagem", "Boa Vista", "Madalena"]),
+            _buildDropdownButton(_bairros), //seleciona o bairro
             SizedBox(height: 16.0),
             Text("Descrição", style: TextStyle(color: Colors.white)),
             SizedBox(height: 8.0),
             Container(
               height: 200,
               child: TextFormField(
+                //campo de descrição
+                controller: _descricaoController,
                 maxLines: null,
                 decoration: InputDecoration(
                   hintText: "Descreva aqui mais detalhes sobre o alerta...",
@@ -210,6 +158,7 @@ class _adicNotifPageState extends State<adicNotifPage> {
                 ),
               ),
             ),
+            //Carregar imagem
             ElevatedButton(
               onPressed: () {
                 showModalBottomSheet(
@@ -242,25 +191,30 @@ class _adicNotifPageState extends State<adicNotifPage> {
                   },
                 );
               },
-              child: Text('Adicionar imagem'),
-            ),
-            SizedBox(height: 16.0),
-            if (lat != 0.0 && long != 0.0)
-              SizedBox(
-                height: 500,
-                child: GoogleMap(
-                  initialCameraPosition: CameraPosition(
-                    target: LatLng(lat, long),
-                    zoom: 18,
-                  ),
-                  zoomControlsEnabled: true,
-                  mapType: MapType.normal,
-                  myLocationEnabled: true,
-                  onMapCreated: onMapCreated,
-                  markers: markers,
+              child: Text(
+                'Adicionar imagem',
+                style: TextStyle(
+                  color: Colors.black, // define a cor do texto como preto
                 ),
               ),
+            ),
             SizedBox(height: 16.0),
+            //Navegar para a tela do mapa
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => mapPage()),
+                );
+              },
+              child: Text(
+                'Marcar Posição',
+                style: TextStyle(
+                  color: Colors.black, // define a cor do texto como preto
+                ),
+              ),
+            ),
+            //enviar dados
             ElevatedButton(
               onPressed: () async {
                 if (_image != null) {
@@ -275,9 +229,9 @@ class _adicNotifPageState extends State<adicNotifPage> {
                       .putFile(_image!, metadata);
                   final imageUrl = await snapshot.ref.getDownloadURL();
                   notificacoesRef.add({
-                    //'tipo': _tipoAlerta,
-                    //'bairro': _bairro,
-                    //'descricao': _descricao,
+                    'tipo': selectedTipoAlerta,
+                    'bairro': selectedBairro,
+                    'descricao': _descricaoController.text,
                     'latitude': lat,
                     'longitude': long,
                     'imagem': imageUrl,
@@ -285,9 +239,9 @@ class _adicNotifPageState extends State<adicNotifPage> {
                   });
                 } else {
                   notificacoesRef.add({
-                    //'tipo': _tipoAlerta,
-                    //'bairro': _bairro,
-                    //'descricao': _descricao,
+                    'tipo': selectedTipoAlerta,
+                    'bairro': selectedBairro,
+                    'descricao': _descricaoController.text,
                     'latitude': lat,
                     'longitude': long,
                     'data': DateTime.now(),
@@ -308,13 +262,34 @@ class _adicNotifPageState extends State<adicNotifPage> {
   }
 
   Widget _buildDropdownButton(List<String> options) {
-    String selectedOption = options.first;
+    String selectedOption = options.isNotEmpty ? options.first : '';
 
     return DropdownButton<String>(
       value: selectedOption,
       onChanged: (String? value) {
         if (value != null) {
           selectedOption = value;
+          selectedBairro = value;
+        }
+      },
+      items: options.map((String option) {
+        return DropdownMenuItem<String>(
+          value: option,
+          child: Text(option),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildDropdownButtonAlerta(List<String> options) {
+    String selectedOption = options.isNotEmpty ? options.first : '';
+
+    return DropdownButton<String>(
+      value: selectedOption,
+      onChanged: (String? value) {
+        if (value != null) {
+          selectedOption = value;
+          selectedTipoAlerta = value;
         }
       },
       items: options.map((String option) {
