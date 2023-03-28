@@ -12,7 +12,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'dart:async';
 import 'dart:convert';
 import 'package:csv/csv.dart';
-import 'package:alcomt_puro/mapPage.dart';
+//import 'package:alcomt_puro/mapPage.dart';
 
 class adicNotifPage extends StatefulWidget {
   final FirebaseAuth auth;
@@ -202,10 +202,10 @@ class _adicNotifPageState extends State<adicNotifPage> {
             //Navegar para a tela do mapa
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => mapPage()),
-                );
+              //  Navigator.push(
+              //    context,
+              //    MaterialPageRoute(builder: (context) => mapPage()),
+              //  );
               },
               child: Text(
                 'Marcar Posição',
