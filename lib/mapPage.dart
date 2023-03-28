@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:alcomt_puro/adicNotifPage.dart';
 
+//pagina mapa
 class mapPage extends StatefulWidget {
   @override
   _mapPageState createState() => _mapPageState();
