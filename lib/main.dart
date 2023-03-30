@@ -8,7 +8,7 @@ import 'package:alcomt_puro/LoginPage.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterConfig.loadEnvVariables();
-  await Firebase.initializeApp(); 
+  await Firebase.initializeApp();
 
   runApp(MyApp());
 }

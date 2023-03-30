@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:alcomt_puro/MenuPage.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -24,7 +25,13 @@ class adicNotifPage extends StatefulWidget {
 
 class _adicNotifPageState extends State<adicNotifPage> {
   List<String> _bairros = []; // Lista de bairros
-  List<String> _tiposAlerta = ["Chuva", "Batida", "Interditada"];
+  List<String> _tiposAlerta = [
+    "Chuva",
+    "Batida",
+    "Rua interditada",
+    "Alto fluxo",
+    "Baixa iluminação"
+  ];
   String selectedBairro = '';
   String selectedTipoAlerta = '';
   TextEditingController _descricaoController = TextEditingController();
@@ -50,7 +57,7 @@ class _adicNotifPageState extends State<adicNotifPage> {
         '_${_image?.hashCode}.png';
   }
 
-  Future<void> uploadFile() async {
+  Future<void> uploadFile(BuildContext context) async {
     try {
       final Reference ref = storage.ref().child(
           'images/${DateTime.now().millisecondsSinceEpoch.toString()}.png');
@@ -62,11 +69,14 @@ class _adicNotifPageState extends State<adicNotifPage> {
       final String urlDownload = await snapshot.ref.getDownloadURL();
       print('URL de Download: $urlDownload');
 
-      final CollectionReference<Map<String, dynamic>> imagesRef =
-          FirebaseFirestore.instance.collection('images');
-      await imagesRef
-          .doc(DateTime.now().toIso8601String())
-          .set({'imageUrl': urlDownload});
+      final docRef = await notificacoesRef.add({
+        'tipo_alerta': selectedTipoAlerta,
+        'bairro': selectedBairro,
+        'imagem_url': urlDownload,
+        'descricao': _descricaoController.text,
+        'data': DateTime.now(),
+      });
+      print('ID da notificação: ${docRef.id}');
     } catch (e) {
       print('Erro ao fazer upload do arquivo: $e');
     }
@@ -113,6 +123,18 @@ class _adicNotifPageState extends State<adicNotifPage> {
     return rowsAsListOfValues.map((e) => e.first.toString()).toList();
   }
 
+  void updateSelectedBairro(String? value) {
+    setState(() {
+      selectedBairro = value!;
+    });
+  }
+
+  void updateSelectedTipoAlerta(String? value) {
+    setState(() {
+      selectedTipoAlerta = value!;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,7 +162,7 @@ class _adicNotifPageState extends State<adicNotifPage> {
             SizedBox(height: 16.0),
             Text("Bairro", style: TextStyle(color: Colors.white)),
             SizedBox(height: 8.0),
-            _buildDropdownButton(_bairros), //seleciona o bairro
+            _buildDropdownButtonBairro(_bairros), //seleciona o bairro
             SizedBox(height: 16.0),
             Text("Descrição", style: TextStyle(color: Colors.white)),
             SizedBox(height: 8.0),
@@ -202,10 +224,10 @@ class _adicNotifPageState extends State<adicNotifPage> {
             //Navegar para a tela do mapa
             ElevatedButton(
               onPressed: () {
-              //  Navigator.push(
-              //    context,
-              //    MaterialPageRoute(builder: (context) => mapPage()),
-              //  );
+                //  Navigator.push(
+                //    context,
+                //    MaterialPageRoute(builder: (context) => mapPage()),
+                //  );
               },
               child: Text(
                 'Marcar Posição',
@@ -261,43 +283,51 @@ class _adicNotifPageState extends State<adicNotifPage> {
     );
   }
 
-  Widget _buildDropdownButton(List<String> options) {
-    String selectedOption = options.isNotEmpty ? options.first : '';
-
-    return DropdownButton<String>(
-      value: selectedOption,
-      onChanged: (String? value) {
-        if (value != null) {
-          selectedOption = value;
-          selectedBairro = value;
-        }
-      },
-      items: options.map((String option) {
-        return DropdownMenuItem<String>(
-          value: option,
-          child: Text(option),
-        );
-      }).toList(),
+  Widget _buildDropdownButtonBairro(List<String> bairros) {
+    String? selectedBairro = bairros.isNotEmpty ? bairros[0] : null;
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.grey[200],
+        hintText: "Selecione o bairro",
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ),
+      value: selectedBairro,
+      onChanged: (String? value) => updateSelectedBairro(value),
+      items: bairros
+          .map(
+            (bairro) => DropdownMenuItem<String>(
+              value: bairro,
+              child: Text(bairro),
+            ),
+          )
+          .toList(),
     );
   }
 
-  Widget _buildDropdownButtonAlerta(List<String> options) {
-    String selectedOption = options.isNotEmpty ? options.first : '';
-
-    return DropdownButton<String>(
-      value: selectedOption,
-      onChanged: (String? value) {
-        if (value != null) {
-          selectedOption = value;
-          selectedTipoAlerta = value;
-        }
-      },
-      items: options.map((String option) {
-        return DropdownMenuItem<String>(
-          value: option,
-          child: Text(option),
-        );
-      }).toList(),
+  Widget _buildDropdownButtonAlerta(List<String> tiposAlerta) {
+    String? selectedTipoAlerta = tiposAlerta.isNotEmpty ? tiposAlerta[0] : null;
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.grey[200],
+        hintText: "Selecione o tipo de alerta",
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ),
+      value: selectedTipoAlerta,
+      onChanged: (String? value) => updateSelectedTipoAlerta(value),
+      items: tiposAlerta
+          .map(
+            (tipoAlerta) => DropdownMenuItem<String>(
+              value: tipoAlerta,
+              child: Text(tipoAlerta),
+            ),
+          )
+          .toList(),
     );
   }
 }
