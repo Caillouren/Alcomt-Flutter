@@ -13,6 +13,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'dart:async';
 import 'dart:convert';
 import 'package:csv/csv.dart';
+
 //import 'package:alcomt_puro/mapPage.dart';
 
 class adicNotifPage extends StatefulWidget {
@@ -269,6 +270,11 @@ class _adicNotifPageState extends State<adicNotifPage> {
                     'data': DateTime.now(),
                   });
                 }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MenuPage(auth: widget.auth)),
+                );
               },
               child: Text(
                 "Enviar",

@@ -1,5 +1,6 @@
 import 'package:alcomt_puro/minhaconta_page.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:alcomt_puro/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:alcomt_puro/adicNotifPage.dart';
@@ -19,10 +20,6 @@ class MenuPage extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
           onPressed: () async {
             await auth.signOut(); // Desautentica o usuário
             Navigator.push(
@@ -30,103 +27,77 @@ class MenuPage extends StatelessWidget {
               MaterialPageRoute(builder: (context) => LoginPage(auth: auth)),
             );
           },
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
         ),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => MinhaContaPage(auth: auth)),
-                  );
+      body: StreamBuilder<QuerySnapshot>(
+        stream:
+            FirebaseFirestore.instance.collection('notificacoes').snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              final notificacao = snapshot.data!.docs[index];
+
+              return GestureDetector(
+                onTap: () {
+                  //Navigator.push(
+                  //context,
+                  //MaterialPageRoute(
+                  //builder: (context) => NotifiEspecificaPage(notificacao: notificacao),
+                  //    ),
+                  //);
                 },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      'assets/person-icon.png',
-                      height: 20,
-                    ),
-                    SizedBox(width: 1),
-                  ],
-                ),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.white),
-                  padding: MaterialStateProperty.all(
-                    EdgeInsets.symmetric(vertical: 20),
-                  ),
-                  textStyle: MaterialStateProperty.all(
-                    TextStyle(color: Colors.black, fontSize: 18),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Image.asset(
-            'assets/logo_alcomt.png',
-            width: 200,
-            height: 200,
-          ),
-          SizedBox(height: 20),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 5,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  color: Colors.black,
+                child: Card(
                   child: ListTile(
                     title: Text(
-                      'Opção ${index + 1}',
-                      style: TextStyle(color: Colors.white),
+                      notificacao['bairro'],
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    onTap: () {},
+                    subtitle: Text(
+                      DateTime.fromMillisecondsSinceEpoch(
+                              notificacao['data'].millisecondsSinceEpoch)
+                          .toString(),
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                    trailing: Icon(Icons.arrow_forward),
                   ),
-                );
-              },
-            ),
-          ),
-          //FloatingActionButton(
-          //backgroundColor: Colors.black,
-          //onPressed: () {
-          //Navigator.push(
-          //context,
-          //MaterialPageRoute(builder: (context) => adicNotifPage()),
-          //);
-          //},
-          //child: Icon(Icons.add),
-          //),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                //Navega para a página
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        adicNotifPage(auth: FirebaseAuth.instance)),
+                ),
               );
             },
-            child: Text(
-              '+',
-              style: TextStyle(fontSize: 18, color: Colors.black),
-            ),
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.white),
-              padding: MaterialStateProperty.all(
-                EdgeInsets.symmetric(vertical: 15),
-              ),
-              textStyle: MaterialStateProperty.all(
-                TextStyle(color: Colors.black, fontSize: 18),
-              ),
-            ),
-          ),
-        ],
+          );
+        },
+      ),
+      floatingActionButton: Container(
+        alignment: Alignment.bottomCenter,
+        padding: EdgeInsets.only(bottom: 16.0),
+        child: FloatingActionButton(
+          backgroundColor: Colors.black,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      adicNotifPage(auth: FirebaseAuth.instance)),
+            );
+          },
+          child: Icon(Icons.add),
+        ),
       ),
     );
   }
