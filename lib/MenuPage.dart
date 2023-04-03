@@ -69,7 +69,7 @@ class _MenuPageState extends State<MenuPage> {
                       child: Ink(
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: InkWell(
                           onTap: () {
@@ -89,10 +89,24 @@ class _MenuPageState extends State<MenuPage> {
                 ],
               ),
             ),
-            Image.asset(
-              'assets/logo_alcomt.png',
-              width: 200,
-              height: 200,
+            Container(
+              margin: EdgeInsets.only(top: 0),
+              child: Image.asset(
+                'assets/logo_alcomt.png',
+                width: 300,
+                height: 300,
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 0, bottom: 10.0),
+              child: Text(
+                'Últimas atualizações:',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
