@@ -5,6 +5,7 @@ import 'package:alcomt_puro/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:alcomt_puro/adicNotifPage.dart';
 import 'package:alcomt_puro/NotificacaoEspecificaPage.dart';
+import 'package:intl/intl.dart';
 
 class MenuPage extends StatefulWidget {
   final FirebaseAuth auth;
@@ -131,37 +132,46 @@ class _MenuPageState extends State<MenuPage> {
                     final notificacao = notificacoesOrdenadas[index];
 
                     return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => NotificacaoEspecificaPage(
-                                notificacao: notificacao),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        child: ListTile(
-                          title: Text(
-                            notificacao['bairro'],
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NotificacaoEspecificaPage(
+                                  notificacao: notificacao),
+                            ),
+                          );
+                        },
+                        child: Card(
+                          child: ListTile(
+                            title: Text(
+                              notificacao['bairro'],
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              notificacao['descricao'],
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                            trailing: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  DateFormat('HH:mm').format(dataNotificacao),
+                                  style: TextStyle(
+                                    fontSize:14.0,
+                                    fontWeight: FontWeight.normal
+                                  ),
+                                ),
+                                Icon(Icons.arrow_forward),
+                              ],
                             ),
                           ),
-                          subtitle: Text(
-                            DateTime.fromMillisecondsSinceEpoch(
-                                    notificacao['data'].millisecondsSinceEpoch)
-                                .toString(),
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                          trailing: Icon(Icons.arrow_forward),
-                        ),
-                      ),
-                    );
+                        ));
                   },
                 );
               },
