@@ -259,6 +259,7 @@ class _adicNotifPageState extends State<adicNotifPage> {
                     'longitude': long,
                     'imagem': imageUrl,
                     'data': DateTime.now(),
+                    'TTL': ""
                   });
                 } else {
                   notificacoesRef.add({
@@ -268,6 +269,7 @@ class _adicNotifPageState extends State<adicNotifPage> {
                     'latitude': lat,
                     'longitude': long,
                     'data': DateTime.now(),
+                    'TTL': ""
                   });
                 }
                 Navigator.push(
