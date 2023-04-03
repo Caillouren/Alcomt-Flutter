@@ -161,11 +161,11 @@ class _MenuPageState extends State<MenuPage> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  DateFormat('HH:mm').format(dataNotificacao),
+                                  DateFormat('HH:mm')
+                                      .format(notificacao['data'].toDate()),
                                   style: TextStyle(
-                                    fontSize:14.0,
-                                    fontWeight: FontWeight.normal
-                                  ),
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.normal),
                                 ),
                                 Icon(Icons.arrow_forward),
                               ],
