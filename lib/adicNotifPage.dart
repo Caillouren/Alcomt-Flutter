@@ -63,7 +63,7 @@ class _adicNotifPageState extends State<adicNotifPage> {
       final Reference ref = storage.ref().child(
           'images/${DateTime.now().millisecondsSinceEpoch.toString()}.png');
       final SettableMetadata metadata = SettableMetadata(
-          contentType: 'image/png',
+          contentType: 'image/*',
           customMetadata: {'order': 'file upload test'});
       final UploadTask uploadTask = ref.putFile(_image!, metadata);
       final TaskSnapshot snapshot = await uploadTask.whenComplete(() {});
@@ -76,6 +76,7 @@ class _adicNotifPageState extends State<adicNotifPage> {
         'imagem_url': urlDownload,
         'descricao': _descricaoController.text,
         'data': DateTime.now(),
+        'TTL': ""
       });
       print('ID da notificação: ${docRef.id}');
     } catch (e) {
@@ -241,8 +242,12 @@ class _adicNotifPageState extends State<adicNotifPage> {
             ElevatedButton(
               onPressed: () async {
                 if (_image != null) {
+                  // Mostrar SnackBar informando que a imagem está sendo enviada
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Enviando imagem...')),
+                  );
                   final metadata = SettableMetadata(
-                    contentType: 'image/jpeg',
+                    contentType: 'image/*',
                     customMetadata: {'picked-file-path': _image!.path},
                   );
                   final snapshot = await FirebaseStorage.instance
@@ -261,6 +266,9 @@ class _adicNotifPageState extends State<adicNotifPage> {
                     'data': DateTime.now(),
                     'TTL': ""
                   });
+                  // Mostrar SnackBar informando que a imagem foi enviada
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Imagem enviada com sucesso!')));
                 } else {
                   notificacoesRef.add({
                     'tipo': selectedTipoAlerta,
