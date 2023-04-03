@@ -104,12 +104,17 @@ class _MenuPageState extends State<MenuPage> {
                     child: CircularProgressIndicator(),
                   );
                 }
+                // Ordena as notificações por data.
+                final notificacoesOrdenadas = snapshot.data!.docs;
+                notificacoesOrdenadas
+                    .sort((a, b) => b['data'].compareTo(a['data']));
+
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: snapshot.data!.docs.length,
+                  itemCount: notificacoesOrdenadas.length,
                   itemBuilder: (context, index) {
-                    final notificacao = snapshot.data!.docs[index];
+                    final notificacao = notificacoesOrdenadas[index];
 
                     return GestureDetector(
                       onTap: () {

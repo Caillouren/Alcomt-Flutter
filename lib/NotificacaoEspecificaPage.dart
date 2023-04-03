@@ -30,7 +30,9 @@ class NotificacaoEspecificaPage extends StatelessWidget {
             ),
             SizedBox(height: 16.0),
             Text(
-              notificacao['data'],
+              DateTime.fromMillisecondsSinceEpoch(
+                      notificacao['data'].millisecondsSinceEpoch)
+                  .toString(),
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.normal,
