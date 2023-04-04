@@ -186,7 +186,7 @@ class _EditBairroPageState extends State<EditBairroPage> {
                   0.25, // Defina a altura desejada
               child: _bairros != null && _bairros!.isNotEmpty
                   ? ListView.builder(
-                      itemCount: 2,
+                      itemCount: 94,
                       itemBuilder: (context, index) {
                         if (index >=
                             (_filteredBairros?.length ?? _bairros!.length)) {

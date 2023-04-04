@@ -16,13 +16,27 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
+  late User _currentUser;
+
   @override
   void initState() {
     super.initState();
+    _currentUser = widget.auth.currentUser!;
   }
 
   @override
   Widget build(BuildContext context) {
+    //final user = FirebaseAuth.instance.currentUser;
+    //final uid = user?.uid;
+
+    Future<Map<String, dynamic>> _getUsuarioBairros() async {
+      final document = await FirebaseFirestore.instance
+          .collection('bairrosUsuarios')
+          .doc(_currentUser.uid)
+          .get();
+      return document.data() ?? {};
+    }
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -94,8 +108,8 @@ class _MenuPageState extends State<MenuPage> {
               margin: EdgeInsets.only(top: 0),
               child: Image.asset(
                 'assets/logo_alcomt.png',
-                width: 300,
-                height: 300,
+                width: 200,
+                height: 200,
               ),
             ),
             Container(
@@ -109,69 +123,91 @@ class _MenuPageState extends State<MenuPage> {
                 ),
               ),
             ),
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('notificacoes')
-                  .snapshots(),
+            FutureBuilder<Map<String, dynamic>>(
+              future: _getUsuarioBairros(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(
                     child: CircularProgressIndicator(),
                   );
                 }
-                // Ordena as notificações por data.
-                final notificacoesOrdenadas = snapshot.data!.docs;
-                notificacoesOrdenadas
-                    .sort((a, b) => b['data'].compareTo(a['data']));
 
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: notificacoesOrdenadas.length,
-                  itemBuilder: (context, index) {
-                    final notificacao = notificacoesOrdenadas[index];
+                final usuarioBairros = snapshot.data!;
 
-                    return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NotificacaoEspecificaPage(
-                                  notificacao: notificacao),
-                            ),
-                          );
-                        },
-                        child: Card(
-                          child: ListTile(
-                            title: Text(
-                              notificacao['bairro'],
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Text(
-                              notificacao['descricao'],
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            trailing: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  DateFormat('HH:mm').format(dataNotificacao),
+                return StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('notificacoes')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    // Ordena as notificações por data.
+                    final notificacoesOrdenadas = snapshot.data!.docs;
+                    notificacoesOrdenadas
+                        .sort((a, b) => b['data'].compareTo(a['data']));
+
+                    final notificacoesFiltradas =
+                        notificacoesOrdenadas.where((notificacao) {
+                      final notificacaoBairro =
+                          notificacao['bairro'] as String?;
+                      return notificacaoBairro != null &&
+                          usuarioBairros[notificacaoBairro] == true;
+                    }).toList();
+
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: notificacoesFiltradas.length,
+                      itemBuilder: (context, index) {
+                        final notificacao = notificacoesFiltradas[index];
+
+                        return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      NotificacaoEspecificaPage(
+                                          notificacao: notificacao),
+                                ),
+                              );
+                            },
+                            child: Card(
+                              child: ListTile(
+                                title: Text(
+                                  notificacao['bairro'],
                                   style: TextStyle(
-                                    fontSize:14.0,
-                                    fontWeight: FontWeight.normal
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Icon(Icons.arrow_forward),
-                              ],
-                            ),
-                          ),
-                        ));
+                                subtitle: Text(
+                                  notificacao['descricao'],
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                                trailing: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      DateFormat('HH:mm')
+                                          .format(notificacao['data'].toDate()),
+                                      style: TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    Icon(Icons.arrow_forward),
+                                  ],
+                                ),
+                              ),
+                            ));
+                      },
+                    );
                   },
                 );
               },
@@ -182,17 +218,27 @@ class _MenuPageState extends State<MenuPage> {
       floatingActionButton: Container(
         alignment: Alignment.bottomCenter,
         padding: EdgeInsets.only(bottom: 16.0),
-        child: FloatingActionButton(
-          backgroundColor: Colors.black,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      adicNotifPage(auth: FirebaseAuth.instance)),
-            );
-          },
-          child: Icon(Icons.add),
+        child: SizedBox(
+          width: 60.0,
+          height: 60.0,
+          child: FloatingActionButton(
+            backgroundColor: Colors.black,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => adicNotifPage(
+                    auth: FirebaseAuth.instance,
+                  ),
+                ),
+              );
+            },
+            child: Icon(
+              Icons.add,
+              size: 70.0,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );

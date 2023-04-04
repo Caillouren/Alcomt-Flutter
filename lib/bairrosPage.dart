@@ -73,8 +73,10 @@ class _AddBairroPageState extends State<AddBairroPage> {
   // Cria um mapa de índices para cada bairro da lista de bairros
   Map<String, int> createBairroIndices(List<String> bairros) {
     Map<String, int> indices = {};
-    for (int i = 0; i < bairros.length; i++) {
-      indices[bairros[i]] = i;
+    if (_bairros != null) {
+      for (int i = 0; i < _bairros!.length; i++) {
+        indices[_bairros![i]] = i;
+      }
     }
     return indices;
   }
@@ -94,8 +96,7 @@ class _AddBairroPageState extends State<AddBairroPage> {
         .asMap()
         .entries
         .where((entry) => entry.value)
-        .map((entry) =>
-            Bairro(nome: _bairros![entry.key], idUsuario: _uidFire))
+        .map((entry) => Bairro(nome: _bairros![entry.key], idUsuario: _uidFire))
         .toList();
 
     try {
@@ -192,7 +193,7 @@ class _AddBairroPageState extends State<AddBairroPage> {
                   0.25, // Defina a altura desejada
               child: _bairros != null && _bairros!.isNotEmpty
                   ? ListView.builder(
-                      itemCount: 2,
+                      itemCount: 94,
                       itemBuilder: (context, index) {
                         if (index >=
                             (_filteredBairros?.length ?? _bairros!.length)) {
