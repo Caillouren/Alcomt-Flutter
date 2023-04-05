@@ -10,8 +10,11 @@ import 'package:alcomt_puro/MenuPage.dart';
 class NotificacaoEspecificaPage extends StatelessWidget {
   final FirebaseAuth auth;
   final QueryDocumentSnapshot<Object?> notificacao;
-  const NotificacaoEspecificaPage({Key? key, required this.notificacao,required this.auth})
-      : super(key: key);
+  const NotificacaoEspecificaPage({
+    Key? key,
+    required this.notificacao,
+    required this.auth,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,25 +24,29 @@ class NotificacaoEspecificaPage extends StatelessWidget {
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(
-          'Minha Conta',
+          'Detalhes da Notificação',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.black, // define o background preto do appBar
         leading: IconButton(
-            //icone <-
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-              // define a cor do ícone como branca
-            ),
-            onPressed: () {
-              Navigator.push(
-                //Navega para a página
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MenuPage(auth:FirebaseAuth.instance)),
-              );
-            }),
+          //icone <-
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+            // define a cor do ícone como branca
+          ),
+          onPressed: () {
+            Navigator.push(
+              //Navega para a página
+              context,
+              MaterialPageRoute(
+                builder: (context) => MenuPage(
+                  auth: FirebaseAuth.instance,
+                ),
+              ),
+            );
+          },
+        ),
       ),
       body: Center(
         child: Column(
@@ -47,7 +54,7 @@ class NotificacaoEspecificaPage extends StatelessWidget {
           children: [
             SizedBox(height: 100.0),
             Text(
-              data['bairro'],
+              'Bairro: ' + data['bairro'],
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
@@ -56,7 +63,16 @@ class NotificacaoEspecificaPage extends StatelessWidget {
             ),
             SizedBox(height: 8.0),
             Text(
-              DateFormat('dd/MM/yyyy').format(data['data'].toDate()),
+              'Data: ' + DateFormat('dd/MM/yyyy').format(data['data'].toDate()),
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height:8.0),
+            Text(
+              'Usuário: ${data['usuario']}',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
@@ -65,7 +81,7 @@ class NotificacaoEspecificaPage extends StatelessWidget {
             ),
             SizedBox(height: 16.0),
             Text(
-              data['descricao'],
+              'Descrição: ${data['descricao']}',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.normal,
@@ -76,8 +92,8 @@ class NotificacaoEspecificaPage extends StatelessWidget {
             if (data.containsKey('imagem'))
               Image.network(
                 data['imagem'],
-                width: 200,
-                height: 200,
+                width: 300,
+                height: 300,
               ),
             SizedBox(height: 16.0),
             Text(

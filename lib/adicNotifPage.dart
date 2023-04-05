@@ -18,6 +18,7 @@ import 'package:csv/csv.dart';
 
 class adicNotifPage extends StatefulWidget {
   final FirebaseAuth auth;
+
   const adicNotifPage({Key? key, required this.auth}) : super(key: key);
 
   @override
@@ -25,6 +26,9 @@ class adicNotifPage extends StatefulWidget {
 }
 
 class _adicNotifPageState extends State<adicNotifPage> {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  String username = '';
+
   List<String> _bairros = []; // Lista de bairros
   List<String> _tiposAlerta = [
     "Chuva",
@@ -70,15 +74,22 @@ class _adicNotifPageState extends State<adicNotifPage> {
       final String urlDownload = await snapshot.ref.getDownloadURL();
       print('URL de Download: $urlDownload');
 
-      final docRef = await notificacoesRef.add({
+      final String uid = widget.auth.currentUser!.uid;
+      final DocumentSnapshot<Map<String, dynamic>> docSnapshot =
+          await firestore.collection('usuarios').doc(uid).get();
+
+      final String nome = docSnapshot.data()!['Nome'];
+      username = nome;
+
+      await notificacoesRef.add({
         'tipo_alerta': selectedTipoAlerta,
         'bairro': selectedBairro,
         'imagem_url': urlDownload,
         'descricao': _descricaoController.text,
         'data': DateTime.now(),
-        'TTL': ""
+        'TTL': "",
+        'usuario': nome
       });
-      print('ID da notificação: ${docRef.id}');
     } catch (e) {
       print('Erro ao fazer upload do arquivo: $e');
     }
@@ -241,6 +252,19 @@ class _adicNotifPageState extends State<adicNotifPage> {
             //enviar dados
             ElevatedButton(
               onPressed: () async {
+                final User? user = FirebaseAuth.instance.currentUser;
+                final String uid = user!.uid;
+
+                // Buscar o documento de usuário correspondente na coleção "usuarios"
+                final DocumentSnapshot userDoc = await FirebaseFirestore
+                    .instance
+                    .collection('usuarios')
+                    .doc(uid)
+                    .get();
+                final Map<String, dynamic> userData =
+                    userDoc.data() as Map<String, dynamic>;
+                final String nome = userData['nome'] as String;
+                // Extrair o nome do usuário do documento de usuário e salvá-lo na variável "nome"
                 if (_image != null) {
                   // Mostrar SnackBar informando que a imagem está sendo enviada
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -264,7 +288,8 @@ class _adicNotifPageState extends State<adicNotifPage> {
                     'longitude': long,
                     'imagem': imageUrl,
                     'data': DateTime.now(),
-                    'TTL': ""
+                    'TTL': "",
+                    'usuario': username,
                   });
                   // Mostrar SnackBar informando que a imagem foi enviada
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -277,7 +302,8 @@ class _adicNotifPageState extends State<adicNotifPage> {
                     'latitude': lat,
                     'longitude': long,
                     'data': DateTime.now(),
-                    'TTL': ""
+                    'TTL': "",
+                    'usuario': username,
                   });
                 }
                 Navigator.push(
