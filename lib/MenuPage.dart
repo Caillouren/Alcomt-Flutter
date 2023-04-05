@@ -163,49 +163,55 @@ class _MenuPageState extends State<MenuPage> {
                       itemCount: notificacoesFiltradas.length,
                       itemBuilder: (context, index) {
                         final notificacao = notificacoesFiltradas[index];
+                        final data = notificacao['data']
+                            .toDate(); // convertendo Timestamp para DateTime
+                        final dataFormatada = DateFormat('dd/MM/yyyy')
+                            .format(data); // formatando a data
 
                         return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      NotificacaoEspecificaPage(
-                                          notificacao: notificacao,auth: widget.auth),
-                                ),
-                              );
-                            },
-                            child: Card(
-                              child: ListTile(
-                                title: Text(
-                                  notificacao['bairro'],
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  notificacao['descricao'],
-                                  style: TextStyle(
-                                    fontSize: 14.0,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                                trailing: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      DateFormat('HH:mm')
-                                          .format(notificacao['data'].toDate()),
-                                      style: TextStyle(
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                    Icon(Icons.arrow_forward),
-                                  ],
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NotificacaoEspecificaPage(
+                                    notificacao: notificacao,
+                                    auth: widget.auth),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            child: ListTile(
+                              title: Text(
+                                notificacao['bairro'],
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ));
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    notificacao['descricao'],
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    'Enviado em ${DateFormat('dd/MM/yyyy HH:mm').format(notificacao['data'].toDate())}',
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
                       },
                     );
                   },
