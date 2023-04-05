@@ -171,7 +171,7 @@ class _MenuPageState extends State<MenuPage> {
                                 MaterialPageRoute(
                                   builder: (context) =>
                                       NotificacaoEspecificaPage(
-                                          notificacao: notificacao),
+                                          notificacao: notificacao,auth: widget.auth),
                                 ),
                               );
                             },
