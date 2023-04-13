@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:alcomt_puro/adicNotifPage.dart';
 
@@ -40,10 +41,14 @@ class _mapPageState extends State<mapPage> {
 
   // Função que salva a localização marcada e envia para a próxima página
   void _saveLocation() {
-    Navigator.of(context).pushNamed('/adicNotifPage', arguments: {
-      'location': _markedLocation,
-      'address': _address,
-    });
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => adicNotifPage(
+          location: _markedLocation,
+          address: _address,
+        ),
+      ),
+    );
   }
 
   // Verifica se o serviço de localização está habilitado
@@ -60,7 +65,7 @@ class _mapPageState extends State<mapPage> {
     if (permissionStatus == PermissionStatus.denied) {
       permissionStatus = await Permission.location.request();
       if (permissionStatus != PermissionStatus.granted &&
-          permissionStatus != PermissionStatus.grantedLimited) {
+          permissionStatus != PermissionStatus.granted) {
         return false;
       }
     }
@@ -86,20 +91,20 @@ class _mapPageState extends State<mapPage> {
               content: Text(
                   "Para usar o aplicativo, você precisa habilitar a permissão de localização."),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text("Cancelar"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
-                FlatButton(
+                TextButton(
                   child: Text("Habilitar"),
                   onPressed: () async {
                     Navigator.of(context).pop();
                     if (await Permission.location.request().isGranted) {
                       // a permissão foi concedida
                       // chama a função novamente para obter a localização atual
-                      _getCurrentLocation(context);
+                      _getCurrentLocation();
                     }
                   },
                 ),
@@ -128,21 +133,21 @@ class _mapPageState extends State<mapPage> {
   }
 
   Future<Position?> getCurrentPosition(
-      {required LocationAccuracy desiredAccuracy, Duration? timeout}) async {
-    if (!await isLocationServiceEnabled()) {
+      {LocationAccuracy desiredAccuracy = LocationAccuracy.high,
+      Duration? timeout}) async {
+    if (!await Geolocator.isLocationServiceEnabled()) {
       throw LocationServiceDisabledException();
     }
 
-    var status = await checkPermission();
-    if (status == PermissionStatus.denied) {
-      throw PermissionDeniedException();
+    var status = await Geolocator.checkPermission();
+    if (status == LocationPermission.denied) {
+      throw PermissionDeniedException('Permissão Negada!!');
     }
 
-    if (status == PermissionStatus.granted ||
-        status == PermissionStatus.grantedLimited) {
+    if (status == PermissionStatus.granted) {
       try {
-        return await GeolocatorPlatform.instance.getCurrentPosition(
-            desiredAccuracy: desiredAccuracy, timeout: timeout);
+        return await Geolocator.getCurrentPosition(
+            desiredAccuracy: desiredAccuracy);
       } on PlatformException catch (e) {
         throw _convertPlatformException(e);
       }
@@ -152,14 +157,24 @@ class _mapPageState extends State<mapPage> {
     status = await requestPermission();
     if (status == PermissionStatus.granted) {
       try {
-        return await GeolocatorPlatform.instance.getCurrentPosition(
-            desiredAccuracy: desiredAccuracy, timeout: timeout);
+        return await Geolocator.getCurrentPosition(
+            desiredAccuracy: desiredAccuracy);
       } on PlatformException catch (e) {
         throw _convertPlatformException(e);
       }
     }
 
-    throw PermissionDeniedException();
+    throw PermissionDeniedException('Permissão Negada!!');
+  }
+
+  Exception _convertPlatformException(PlatformException e) {
+    // Converta a exceção do tipo PlatformException para uma exceção personalizada
+    // Aqui, você pode adicionar sua própria lógica de conversão
+    return Exception('Ocorreu um erro: ${e.message}');
+  }
+
+  Future<LocationPermission> requestPermission() async {
+    return await Geolocator.requestPermission();
   }
 
   @override

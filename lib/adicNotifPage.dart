@@ -14,7 +14,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:csv/csv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:alcomt_puro/mapPage.dart';
 
 //import 'package:alcomt_puro/mapPage.dart';
 
@@ -239,10 +239,10 @@ class _adicNotifPageState extends State<adicNotifPage> {
             //Navegar para a tela do mapa
             ElevatedButton(
               onPressed: () {
-                //  Navigator.push(
-                //    context,
-                //    MaterialPageRoute(builder: (context) => mapPage()),
-                //  );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => mapPage()),
+                );
               },
               child: Text(
                 'Marcar Posição',
