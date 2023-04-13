@@ -44,8 +44,8 @@ class _mapPageState extends State<mapPage> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => adicNotifPage(
-          location: _markedLocation,
-          address: _address,
+          location: _markedLocation, // passar para a outra página
+          address: _address, // passar para a outra página
         ),
       ),
     );
@@ -169,7 +169,6 @@ class _mapPageState extends State<mapPage> {
 
   Exception _convertPlatformException(PlatformException e) {
     // Converta a exceção do tipo PlatformException para uma exceção personalizada
-    // Aqui, você pode adicionar sua própria lógica de conversão
     return Exception('Ocorreu um erro: ${e.message}');
   }
 
