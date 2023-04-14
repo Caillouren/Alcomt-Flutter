@@ -20,8 +20,14 @@ import 'package:alcomt_puro/mapPage.dart';
 
 class adicNotifPage extends StatefulWidget {
   final FirebaseAuth auth;
-
-  const adicNotifPage({Key? key, required this.auth}) : super(key: key);
+  final LatLng? location;
+  final String? address;
+  const adicNotifPage(
+      {Key? key,
+      required this.auth,
+      required this.location,
+      required this.address})
+      : super(key: key);
 
   @override
   _adicNotifPageState createState() => _adicNotifPageState();
@@ -45,6 +51,7 @@ class _adicNotifPageState extends State<adicNotifPage> {
   double lat = 0.0; //mapa
   double long = 0.0; //mapa
   String erro = ''; //mapa
+  String endereco = '';
   String _path = '';
   String imageName = '';
   FirebaseStorage storage = FirebaseStorage.instance;
@@ -56,6 +63,9 @@ class _adicNotifPageState extends State<adicNotifPage> {
   void initState() {
     super.initState();
     loadBairros(); // Carrega os bairros a partir do arquivo CSV
+    lat = widget.location?.latitude ?? 0.0;
+    long = widget.location?.longitude ?? 0.0;
+    endereco = widget.address ?? '';
   }
 
 // Upload de imagens
@@ -285,13 +295,14 @@ class _adicNotifPageState extends State<adicNotifPage> {
                   notificacoesRef.add({
                     'tipo': selectedTipoAlerta,
                     'bairro': selectedBairro,
+                    'endereço': endereco,
                     'descricao': _descricaoController.text,
                     'latitude': lat,
                     'longitude': long,
                     'imagem': imageUrl,
                     'data': DateTime.now(),
                     'TTL': "",
-                    'usuario': username,
+                    'usuario': nome,
                   });
                   // Mostrar SnackBar informando que a imagem foi enviada
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -300,12 +311,13 @@ class _adicNotifPageState extends State<adicNotifPage> {
                   notificacoesRef.add({
                     'tipo': selectedTipoAlerta,
                     'bairro': selectedBairro,
+                    'endereço': endereco,
                     'descricao': _descricaoController.text,
                     'latitude': lat,
                     'longitude': long,
                     'data': DateTime.now(),
                     'TTL': "",
-                    'usuario': username,
+                    'usuario': nome,
                   });
                 }
                 Navigator.push(

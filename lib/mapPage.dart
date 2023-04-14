@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:alcomt_puro/adicNotifPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 //pagina mapa
 class mapPage extends StatefulWidget {
@@ -49,14 +50,15 @@ class _mapPageState extends State<mapPage> {
 
   // Função que salva a localização marcada e envia para a próxima página
   void _saveLocation() {
-    //Navigator.of(context).push(
-    //MaterialPageRoute(
-    //builder: (context) => adicNotifPage(
-    //location: _markedLocation, // passar para a outra página
-    //address: _address, // passar para a outra página
-    //),
-    //),
-    //);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => adicNotifPage(
+          auth: FirebaseAuth.instance,
+          location: _markedLocation, // passar para a outra página
+          address: _address, // passar para a outra página
+        ),
+      ),
+    );
   }
 
   // Verifica se o serviço de localização está habilitado

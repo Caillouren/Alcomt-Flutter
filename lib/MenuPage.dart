@@ -235,7 +235,9 @@ class _MenuPageState extends State<MenuPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => adicNotifPage(
-                    auth: FirebaseAuth.instance,
+                    auth: widget.auth,
+                    location: null, // passar para a outra página
+                    address: null,
                   ),
                 ),
               );
