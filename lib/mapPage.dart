@@ -30,25 +30,33 @@ class _mapPageState extends State<mapPage> {
     setState(() {
       _markedLocation = location;
     });
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-        _markedLocation!.latitude, _markedLocation!.longitude);
-    Placemark placemark = placemarks[0];
-    setState(() {
-      _address =
-          "${placemark.thoroughfare}, ${placemark.subThoroughfare} - ${placemark.subLocality}, ${placemark.locality} - ${placemark.administrativeArea}";
-    });
+
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          _markedLocation!.latitude, _markedLocation!.longitude);
+      Placemark placemark = placemarks[0];
+      setState(() {
+        _address =
+            "${placemark.thoroughfare}, ${placemark.subThoroughfare} - ${placemark.subLocality}, ${placemark.locality} - ${placemark.administrativeArea}";
+      });
+    } on PlatformException catch (e) {
+      print('Erro ao buscar endereço: ${e.toString()}');
+      setState(() {
+        _address = 'Não foi possível obter o endereço';
+      });
+    }
   }
 
   // Função que salva a localização marcada e envia para a próxima página
   void _saveLocation() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => adicNotifPage(
-          location: _markedLocation, // passar para a outra página
-          address: _address, // passar para a outra página
-        ),
-      ),
-    );
+    //Navigator.of(context).push(
+    //MaterialPageRoute(
+    //builder: (context) => adicNotifPage(
+    //location: _markedLocation, // passar para a outra página
+    //address: _address, // passar para a outra página
+    //),
+    //),
+    //);
   }
 
   // Verifica se o serviço de localização está habilitado
