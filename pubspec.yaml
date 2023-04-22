@@ -47,7 +47,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   shared_preferences: ^2.0.18
   csv: ^5.0.1
-
+  flutter_charts: ^0.5.1
   #Firebase Database
   cloud_firestore: ^4.4.3
   firebase_core: ^2.7.0
@@ -81,6 +81,7 @@ flutter:
     - assets/logo_alcomt.png
     - assets/bairrosRecife.csv
     - assets/person-icon.png
+    - assets/acidentesRecife2015a2021.csv
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

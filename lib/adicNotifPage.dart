@@ -39,11 +39,16 @@ class _adicNotifPageState extends State<adicNotifPage> {
 
   List<String> _bairros = []; // Lista de bairros
   List<String> _tiposAlerta = [
-    "Chuva",
-    "Batida",
-    "Rua interditada",
+    "Acidente com Vítimas",
+    "Acidente sem Vítimas",
+    "Alagamento",
     "Alto fluxo",
-    "Baixa iluminação"
+    "Atropelamento de Animal",
+    "Baixa iluminação",
+    "Batida",
+    "Chuva",
+    "Queda de Árvore",
+    "Rua interditada",
   ];
   String selectedBairro = '';
   String selectedTipoAlerta = '';
